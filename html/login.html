@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login Portal</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+    <style>
+        body {
+  background: #76b852; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;      
+}
+        .button-success,
+        .button-error,
+        .button-warning,
+        .button-secondary {
+            color: white;
+            border-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+        .button-success {
+            background: rgb(28, 184, 65); /* this is a green */
+        }
+        .button-error {
+            background: rgb(202, 60, 60); /* this is a maroon */
+        }
+        .button-warning {
+            background: rgb(223, 117, 20); /* this is an orange */
+        }
+        .button-secondary {
+            background: rgb(66, 184, 221); /* this is a light blue */
+        }
+</style>
+</head>
+
+<body>
+
+    <div class="pure-menu pure-menu-horizontal" align="center">
+        <ul class="pure-menu-list">
+            <span class="pure-menu-heading" align="left">Please Login</span>
+            </li>
+        </ul>
+    </div>
+    <div align="center">
+        <form class="pure-form" method="POST" action="/login">
+            <fieldset class="pure-group">
+                <input type="text" name="username" class="pure-input-1-2" placeholder="Username">
+                <input type="password" name="password" class="pure-input-1-2" placeholder="Password">
+            </fieldset>
+            <button type="submit" class="pure-button pure-input-1-2 pure-button-primary">Sign in</button>
+        </form>
+    </div>
+</body>
+
+</html>
