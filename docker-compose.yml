@@ -1,0 +1,20 @@
+version: "3"
+services:
+  bot:
+    container_name: docker-bot-psql
+    restart: always
+    build: .
+    ports:
+      - "9990:9990"
+    links:
+      - db
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: asusmhdsh
+  # adminer:
+  #   image: adminer
+  #   restart: "no"
+  #   ports:
+  #     - "8080:8080"
