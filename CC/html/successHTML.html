@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Botnet C&C: Success</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+    crossorigin="anonymous">
+
+  <style>
+    body {
+      background: #76b852;
+      /* fallback for old browsers */
+      background: -webkit-linear-gradient(right, #76b852, #8dc26f);
+      background: -moz-linear-gradient(right, #76b852, #8dc26f);
+      background: -o-linear-gradient(right, #76b852, #8dc26f);
+      background: linear-gradient(to left, #76b852, #8dc26f);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .button-success,
+    .button-error,
+    .button-warning,
+    .button-secondary {
+      color: white;
+      border-radius: 4px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-success {
+      background: rgb(28, 184, 65);
+      /* this is a green */
+    }
+
+    .button-error {
+      background: rgb(202, 60, 60);
+      /* this is a maroon */
+    }
+
+    .button-warning {
+      background: rgb(223, 117, 20);
+      /* this is an orange */
+    }
+
+    .button-secondary {
+      background: rgb(66, 184, 221);
+      /* this is a light blue */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    p {
+      padding: 10px;
+    }
+
+    #left {
+      position: absolute;
+      left: 0;
+      width: 50%;
+    }
+
+    #right {
+      position: absolute;
+      right: 0;
+      width: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pure-menu pure-menu-horizontal" align="center">
+    <ul class="pure-menu-list">
+      <span class="pure-menu-heading" align="left">Botnet C&C</span>
+      <li class="pure-menu-item pure-menu-selected">
+        <a href="./panel" class="pure-menu-link">Control Panel</a>
+      </li>
+      <li class="pure-menu-item pure-menu-selected">
+        <a href="./files" class="pure-menu-link">File Browser</a>
+      </li>
+      <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+        <a id="menuLink1" class="pure-menu-link">User Managment</a>
+        <ul class="pure-menu-children">
+          <li class="pure-menu-item">
+            <a href="./logout" class="pure-menu-link">Logout</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <br />
+  <br />
+  <div align="center">
+    <h2>Success: {MESSAGE}</h2>
+  </div>
+  <br />
+  {STATS} <br />
+  <div align="center">
+    <a class="button-success pure-button" href="./panel">{MESSAGE} Return to Control Panel</a>
+  </div>
+</body>
+
+</html>
