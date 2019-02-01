@@ -1,4 +1,4 @@
-FROM golang:1.11.4-alpine
+FROM golang:1.11.5-alpine
 RUN mkdir /go/src/BotServer
 
 RUN apk add git
