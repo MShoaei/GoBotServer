@@ -13,6 +13,6 @@ RUN go get github.com/gorilla/mux
 RUN go get github.com/gorilla/securecookie
 RUN go get github.com/lib/pq
 RUN go install .
-ENTRYPOINT [ "/go/bin/BotServer", "root", "toor" ]
-# ENTRYPOINT [ "/bin/sh"]
+# ENTRYPOINT [ "/go/bin/BotServer", "root", "toor" ]
+ENTRYPOINT [ "/bin/sh"]
 EXPOSE 9990
