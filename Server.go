@@ -40,6 +40,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	_ "html/template"
 	"io"
 	"io/ioutil"
 	"math/rand"
@@ -842,7 +843,7 @@ func main() {
 	// db, err = sql.Open("postgres", connStr)
 	db, err = sql.Open("postgres", "user="+pqUser+" password="+pqPass+" host="+pqHost+" dbname="+pqName+" sslmode=disable")
 	if err != nil {
-		fmt.Println("[!] ERROR: CHECK MYSQL SETTINGS! [!]")
+		fmt.Println("[!] ERROR: CHECK POSTGRES SETTINGS! [!]")
 		fmt.Println(err)
 		os.Exit(0)
 	}
@@ -850,7 +851,7 @@ func main() {
 
 	err = db.Ping()
 	if err != nil {
-		fmt.Println("[!] ERROR: CHECK IF MYSQL SERVER IS ONLINE! [!]")
+		fmt.Println("[!] ERROR: CHECK IF POSTGRES SERVER IS ONLINE! [!]")
 		os.Exit(0)
 	}
 
